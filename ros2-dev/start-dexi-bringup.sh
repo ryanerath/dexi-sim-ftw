@@ -1,9 +1,19 @@
 #!/bin/bash
 
-# Start NextDNS with DroneBlocks config (c6a89a) as a local DoT stub resolver
-sudo nextdns run -config c6a89a -listen 127.0.0.53:53 -report-client-info &
-sleep 2
-echo "nameserver 127.0.0.53" | sudo tee /etc/resolv.conf > /dev/null
+# Start NextDNS with DroneBlocks config (c6a89a) as a local DoT stub resolver.
+# Only switch resolv.conf if nextdns is installed and actually starts listening.
+if command -v nextdns &>/dev/null; then
+    sudo nextdns run -config c6a89a -listen 127.0.0.53:53 -report-client-info &
+    sleep 3
+    if ss -tlnu 2>/dev/null | grep -q '127.0.0.53'; then
+        echo "nameserver 127.0.0.53" | sudo tee /etc/resolv.conf > /dev/null
+        echo "NextDNS started — DNS routing through config c6a89a"
+    else
+        echo "NextDNS failed to bind — leaving DNS unchanged"
+    fi
+else
+    echo "nextdns not installed — skipping DNS override"
+fi
 
 # Wait for container to fully start
 sleep 10
