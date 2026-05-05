@@ -42,14 +42,5 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
 RUN mkdir -p /home/ubuntu && \
     echo "source /opt/px4_ws/install/setup.bash" >> /home/ubuntu/.bashrc || true
 
-# Install NextDNS CLI — runs as a local DoT stub resolver so the config ID
-# (c6a89a) is properly applied via SNI. Started at runtime in start-dexi-bringup.sh.
-RUN curl -sL https://repo.nextdns.io/nextdns.gpg \
-        | sudo gpg --dearmor -o /usr/share/keyrings/nextdns.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/nextdns.gpg] https://repo.nextdns.io/deb stable main" \
-        | sudo tee /etc/apt/sources.list.d/nextdns.list && \
-    sudo apt-get update && \
-    sudo apt-get install -y nextdns && \
-    sudo rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/ubuntu

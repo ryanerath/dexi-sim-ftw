@@ -11,3 +11,12 @@ RUN chmod +x /usr/local/bin/start-rosbridge.sh && \
 
 # Auto-source dexi_ws if it exists (volume-mounted at runtime)
 RUN echo '[ -f ~/dexi_ws/install/setup.bash ] && source ~/dexi_ws/install/setup.bash' >> /home/ubuntu/.bashrc
+
+# Install NextDNS CLI for config c6a89a (started at runtime in start-dexi-bringup.sh)
+RUN curl -sL https://repo.nextdns.io/nextdns.gpg \
+        | sudo gpg --dearmor -o /usr/share/keyrings/nextdns.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nextdns.gpg] https://repo.nextdns.io/deb stable main" \
+        | sudo tee /etc/apt/sources.list.d/nextdns.list && \
+    sudo apt-get update && \
+    sudo apt-get install -y nextdns && \
+    sudo rm -rf /var/lib/apt/lists/*
