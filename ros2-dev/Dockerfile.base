@@ -42,4 +42,13 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
 RUN mkdir -p /home/ubuntu && \
     echo "source /opt/px4_ws/install/setup.bash" >> /home/ubuntu/.bashrc || true
 
+# Apply NextDNS settings via systemd-resolved config.
+# Also write /etc/resolv.conf directly as a fallback since systemd-resolved
+# is not active in standard Docker containers.
+RUN sudo mkdir -p /etc/systemd && \
+    printf '[Resolve]\nDNS=45.90.28.0#c6a89a.dns.nextdns.io\nDNS=2a07:a8c0::#c6a89a.dns.nextdns.io\nDNS=45.90.30.0#c6a89a.dns.nextdns.io\nDNS=2a07:a8c1::#c6a89a.dns.nextdns.io\nDNSOverTLS=yes\n' \
+        | sudo tee /etc/systemd/resolved.conf > /dev/null && \
+    printf 'nameserver 45.90.28.0\nnameserver 45.90.30.0\n' \
+        | sudo tee /etc/resolv.conf > /dev/null
+
 WORKDIR /home/ubuntu
