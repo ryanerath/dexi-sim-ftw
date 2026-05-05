@@ -30,9 +30,6 @@ services:
   micro-dds-agent:
     image: microros/micro-ros-agent:humble
     network_mode: "service:px4-sitl"
-    dns:
-      - 45.90.28.0
-      - 45.90.30.0
     command: udp4 --port 8888
     environment:
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
