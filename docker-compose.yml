@@ -2,6 +2,9 @@ services:
   ros2-dev:
     build: ./ros2-dev
     image: droneblocks/dexi-sim-ros2:latest
+    dns:
+      - 45.90.28.0
+      - 45.90.30.0
     entrypoint: /bin/bash
     command: >
       -c "/usr/local/bin/start-dexi-bringup.sh &
@@ -27,6 +30,9 @@ services:
   micro-dds-agent:
     image: microros/micro-ros-agent:humble
     network_mode: "service:px4-sitl"
+    dns:
+      - 45.90.28.0
+      - 45.90.30.0
     command: udp4 --port 8888
     environment:
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
@@ -37,6 +43,9 @@ services:
   px4-sitl:
     build: ./px4-gazebo-slim
     image: droneblocks/px4-gazebo-slim:1.16.0
+    dns:
+      - 45.90.28.0
+      - 45.90.30.0
     # Pass target IPs for MAVLink: [API IP, QGC IP]
     # - First arg (IP_API): MAVSDK receives on port 14540
     # - Second arg (IP_QGC): QGC receives on port 14550
@@ -52,6 +61,9 @@ services:
 
   web-dashboard:
     image: droneblocks/dexi-droneblocks:0.20
+    dns:
+      - 45.90.28.0
+      - 45.90.30.0
     ports:
       - "80:3000"
     networks:
@@ -77,6 +89,9 @@ services:
 
   node-red:
     image: droneblocks/dexi-node-red:latest
+    dns:
+      - 45.90.28.0
+      - 45.90.30.0
     restart: unless-stopped
     ports:
       - "1880:1880"
@@ -99,6 +114,9 @@ services:
       context: ./unity
       dockerfile: dexi-sim/Dockerfile
     image: droneblocks/dexi-sitl-city:latest
+    dns:
+      - 45.90.28.0
+      - 45.90.30.0
     ports:
       - "1337:1337"
     networks:
@@ -113,6 +131,9 @@ services:
   code-server:
     build: ./code-server
     image: droneblocks/dexi-code-server:latest
+    dns:
+      - 45.90.28.0
+      - 45.90.30.0
     ports:
       - "9999:8080"
     networks:
