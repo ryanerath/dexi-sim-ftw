@@ -42,13 +42,14 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
 RUN mkdir -p /home/ubuntu && \
     echo "source /opt/px4_ws/install/setup.bash" >> /home/ubuntu/.bashrc || true
 
-# Apply NextDNS settings via systemd-resolved config.
-# Also write /etc/resolv.conf directly as a fallback since systemd-resolved
-# is not active in standard Docker containers.
-RUN sudo mkdir -p /etc/systemd && \
-    printf '[Resolve]\nDNS=45.90.28.0#c6a89a.dns.nextdns.io\nDNS=2a07:a8c0::#c6a89a.dns.nextdns.io\nDNS=45.90.30.0#c6a89a.dns.nextdns.io\nDNS=2a07:a8c1::#c6a89a.dns.nextdns.io\nDNSOverTLS=yes\n' \
-        | sudo tee /etc/systemd/resolved.conf > /dev/null && \
-    printf 'nameserver 45.90.28.0\nnameserver 45.90.30.0\n' \
-        | sudo tee /etc/resolv.conf > /dev/null
+# Install NextDNS CLI — runs as a local DoT stub resolver so the config ID
+# (c6a89a) is properly applied via SNI. Started at runtime in start-dexi-bringup.sh.
+RUN curl -sL https://repo.nextdns.io/nextdns.gpg \
+        | sudo gpg --dearmor -o /usr/share/keyrings/nextdns.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nextdns.gpg] https://repo.nextdns.io/deb stable main" \
+        | sudo tee /etc/apt/sources.list.d/nextdns.list && \
+    sudo apt-get update && \
+    sudo apt-get install -y nextdns && \
+    sudo rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/ubuntu

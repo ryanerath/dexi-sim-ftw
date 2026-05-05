@@ -3,8 +3,7 @@ services:
     build: ./ros2-dev
     image: droneblocks/dexi-sim-ros2:latest
     dns:
-      - 45.90.28.0
-      - 45.90.30.0
+      - 45.90.28.0  # fallback until nextdns CLI starts in start-dexi-bringup.sh
     entrypoint: /bin/bash
     command: >
       -c "/usr/local/bin/start-dexi-bringup.sh &

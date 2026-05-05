@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Start NextDNS with DroneBlocks config (c6a89a) as a local DoT stub resolver
+sudo nextdns run -config c6a89a -listen 127.0.0.53:53 -report-client-info &
+sleep 2
+echo "nameserver 127.0.0.53" | sudo tee /etc/resolv.conf > /dev/null
+
 # Wait for container to fully start
 sleep 10
 
